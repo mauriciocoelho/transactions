@@ -11,7 +11,7 @@ Para realizar a instalação deste repositório, faça os seguintes passos em se
 
 Clone o repositório em uma pasta  
 ```
-https://github.com/mauriciocoelho/transactions.git
+git clone https://github.com/mauriciocoelho/transactions.git
 ```
 
 Acesse o diretório do projeto
