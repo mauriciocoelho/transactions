@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Traits\ApiResponser;
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\TransactionRequest;
 use App\Repositories\TransactionRepository;
-use Exception;
+use App\Http\Resources\TransactionResource;
 
 class TransactionController extends Controller
 {
+    use ApiResponser;
+    
     protected $repository;
 
     public function __construct(
@@ -18,44 +21,40 @@ class TransactionController extends Controller
     {
         $this->repository = $repository;
     }
+
+    public function index(): JsonResponse
+    {        
+        $transaction = $this->repository->getAll();
+        return $this->success($transaction, 'transaction fetched successfully');  
+    }
+
+
+    public function store(TransactionRequest $request): JsonResponse
+    {        
+        $transaction = $this->repository->created($request->all());
+
+        return $this->success(TransactionResource::ResponseMapTransaction($transaction), 'transaction created successfully', 201);
+    }
+
+    public function show($id): JsonResponse
+    {
+        $transaction = $this->repository->getShow($id);
+        return $this->success(TransactionResource::ResponseMapTransaction($transaction), 'transaction fetched successfully');
+    }
+
+    public function update(TransactionRequest $request, $id): JsonResponse
+    {
+        $transaction= $this->repository->updated($id, $request->all());
+
+        return $this->success(TransactionResource::ResponseMapTransaction($transaction), 'transaction updated successfully', 201);
+    }
+
+    public function destroy($id): JsonResponse
+    {
+        $transaction = $this->repository->deleted($id);
+
+        return $this->success(TransactionResource::ResponseMapTransaction($transaction), 'transaction deleted successfully');
+    }
+
     
-    public function index()
-    {
-        try {
-            $transactions = $this->repository->list();
-            if(sizeof($transactions)){
-                return response()->json([
-                    'status' => 200,
-                    'transactions'   => $transactions,
-                ]);
-            }
-            return response()->json(['status' => 203, 'msg' => 'no record found']);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-    }
-
-    public function store(TransactionRequest $resquest)
-    {
-        try {
-            $transactions = $this->repository->created($resquest->all());
-            return $transactions->json();
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-
-    }
-
-    public function destroy($id)
-    {   
-        try {
-            $transactions = $this->repository->deleted($id);
-            return response()->json([
-                'status' => 200,
-                'message' => 'Transaction deleted!'
-            ]);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    } 
 }

@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('title');
             $table->double('value', 8, 2);
             $table->enum('type', ['income', 'outcome']);
-            //$table->timestamps();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

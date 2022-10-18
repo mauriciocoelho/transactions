@@ -11,9 +11,9 @@ class TransactionList extends Component {
   
   async componentDidMount(){
     const res = await axios.get('/api/transactions');
-    if (res.data.status === 200){
+    if (res.data.statuscode === 200){
       this.setState({
-        transactions: res.data.transactions,
+        transactions: res.data.data,
         loading: false,
       });
     }else{
@@ -28,7 +28,7 @@ class TransactionList extends Component {
     thidClickedFunda.innerText = "Deleting...";
 
     const res = await axios.delete(`/api/transactions/${id}`);
-    if(res.data.status === 200)
+    if(res.data.statuscode === 200)
     {
       thidClickedFunda.closest("tr").remove()
       console.log(res.data.message);

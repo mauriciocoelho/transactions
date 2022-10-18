@@ -20,37 +20,53 @@ class TransactionRepository extends BaseRepository
         return Transaction::class;
     }
 
-    public function list()
+    public function getAll()
     {
-        $result = $this->model->all();
-        return $result;
-    }
+        $data = $this->model->all();
+        return $data;
+    }    
 
-    public function created($validatedData)
+    public function created(array $data): Transaction
     {        
-        $type = $validatedData['type'];
-        $value = $validatedData['value'];
+        return $this->model::create($data);     
+        
+        //$type = $validatedData['type'];
+        //$value = $validatedData['value'];
 
-        if($type == 'income'){
-            $transaction = new $this->model();
-            $transaction->title = $validatedData['title'];        
-            $transaction->value = $validatedData['value'];
-            $transaction->type  = $validatedData['type'];
-            $transaction->save();
-        }elseif($type == 'outcome'){
-            $total = $this->model
-            ->select(DB::raw('SUM(CASE WHEN type = "income" THEN value ELSE 0 END - CASE WHEN type = "outcome" THEN value ELSE 0 END) as total'))->get();
-            if ($value >= $total){
-                $transaction = new $this->model();
-                $transaction->title = $validatedData['title'];        
-                $transaction->value = $validatedData['value'];
-                $transaction->type  = $validatedData['type'];
-                $transaction->save();
-            }
-        }       
+        //if($type == 'income'){
+        //    $transaction = new $this->model();
+        //    $transaction->title = $validatedData['title'];        
+        //    $transaction->value = $validatedData['value'];
+        //    $transaction->type  = $validatedData['type'];
+        //    $transaction->save();
+        ///}elseif($type == 'outcome'){
+        //    $total = $this->model
+        //    ->select(DB::raw('SUM(CASE WHEN type = "income" THEN value ELSE 0 END - CASE WHEN type = "outcome" THEN value ELSE 0 END) as total'))->get();
+        //    if ($value >= $total){
+        //        $transaction = new $this->model();
+        //        $transaction->title = $validatedData['title'];        
+        //        $transaction->value = $validatedData['value'];
+        //        $transaction->type  = $validatedData['type'];
+        //        $transaction->save();
+        //    }
+        //}       
 
-        return $transaction;
+        //return $transaction;
     }
+
+    public function getShow($id)
+    {
+        $data = $this->model::find($id);
+        return $data;
+    }
+
+    public function updated($id, $data)
+    {
+        $update = $this->model::find($id);
+        $update->update($data);
+        return $update;
+    }
+
     
     public function deleted($id)
     {

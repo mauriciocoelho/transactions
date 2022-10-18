@@ -51,7 +51,7 @@ php artisan config:clear
 
 db
 ```
-php artisan migrate --seed
+php artisan migrate:fresh --seed
 ```
 
 Gere uma chave para a sua aplicação  
@@ -82,5 +82,5 @@ Os seguintes campos são necessários para adicionar um transação
 
 ### Testes Unitário
 ```
-- vendor\bin\phpunit --filter returns_a_successful_response
+- php artisan test
 ```

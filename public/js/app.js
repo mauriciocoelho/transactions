@@ -5831,7 +5831,7 @@ var TransactionList = /*#__PURE__*/function (_Component) {
               case 4:
                 res = _context.sent;
 
-                if (res.data.status === 200) {
+                if (res.data.statuscode === 200) {
                   thidClickedFunda.closest("tr").remove();
                   console.log(res.data.message);
                 }
@@ -5867,9 +5867,9 @@ var TransactionList = /*#__PURE__*/function (_Component) {
               case 2:
                 res = _context2.sent;
 
-                if (res.data.status === 200) {
+                if (res.data.statuscode === 200) {
                   this.setState({
-                    transactions: res.data.transactions,
+                    transactions: res.data.data,
                     loading: false
                   });
                 } else {
