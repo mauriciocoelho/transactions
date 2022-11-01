@@ -67,11 +67,11 @@ php artisan serve
 ## Testando Api
 Você utilizar o Postman ou Insomnia
 ```
-Listar Transações
+### Listar Transações
 ```
 GET /api/transactions
 ```
-Adicionar Transação
+### Adicionar Transação
 Para adicionar uma transação, faça uma chamada **POST** para o endereço abaixo  
 ```
 POST /api/transactions
@@ -82,8 +82,7 @@ Os seguintes campos são necessários para adicionar um transação
 - value (Obrigatório, númerico)
 - type (Obrigatório, pode ser income ou outcome)
 ```
-
-Testes Unitário
+### Testes Unitário
 ```
 - php artisan test
 ```
