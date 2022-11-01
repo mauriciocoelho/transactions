@@ -64,6 +64,7 @@ Você pode iniciar a aplicação através do comando:
 ```
 php artisan serve
 ```
+
 ## Testando Api
 Você utilizar o Postman ou Insomnia
 ```
