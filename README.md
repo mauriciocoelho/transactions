@@ -67,7 +67,7 @@ php artisan serve
 
 ## Testando Api
 Você utilizar o Postman ou Insomnia
-```
+
 ### Listar Transações
 ```
 GET /api/transactions
