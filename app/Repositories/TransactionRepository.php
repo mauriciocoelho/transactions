@@ -28,30 +28,7 @@ class TransactionRepository extends BaseRepository
 
     public function created(array $data): Transaction
     {        
-        return $this->model::create($data);     
-        
-        //$type = $validatedData['type'];
-        //$value = $validatedData['value'];
-
-        //if($type == 'income'){
-        //    $transaction = new $this->model();
-        //    $transaction->title = $validatedData['title'];        
-        //    $transaction->value = $validatedData['value'];
-        //    $transaction->type  = $validatedData['type'];
-        //    $transaction->save();
-        ///}elseif($type == 'outcome'){
-        //    $total = $this->model
-        //    ->select(DB::raw('SUM(CASE WHEN type = "income" THEN value ELSE 0 END - CASE WHEN type = "outcome" THEN value ELSE 0 END) as total'))->get();
-        //    if ($value >= $total){
-        //        $transaction = new $this->model();
-        //        $transaction->title = $validatedData['title'];        
-        //        $transaction->value = $validatedData['value'];
-        //        $transaction->type  = $validatedData['type'];
-        //        $transaction->save();
-        //    }
-        //}       
-
-        //return $transaction;
+        return $this->model::create($data);
     }
 
     public function getShow($id)

@@ -43,6 +43,12 @@ Instalar o laravel
 composer install
 ```
 
+Instalar o React
+```
+npm install
+npm run dev
+```
+
 Limpar cache
 ```
 php artisan cache:clear

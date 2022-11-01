@@ -21,7 +21,7 @@ class TransactionFactory extends Factory
         return [
             'title' => $this->faker->name(),
             'value' => $this->faker->unique()->numberBetween(1, 20),
-            'type' => 'income',
+            'type' =>  $this->faker->randomElement(['income', 'outcome']),
         ];
     }
 }
