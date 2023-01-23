@@ -7,10 +7,14 @@ class TransactionList extends Component {
   state = {
     transactions: [],
     loading: true,
+    filteredTransactions: [],
+    currentPage: 1,
+    transactionsPerPage: 5,
+    pageNumbers: []
   }
   
   async componentDidMount(){
-    const res = await axios.get('/api/transactions');
+    const res = await axios.get('/api/v1/transactions');
     if (res.data.statuscode === 200){
       this.setState({
         transactions: res.data.data,
@@ -24,28 +28,46 @@ class TransactionList extends Component {
   }
 
   deleteTransaction = async (e, id) => {
-    const thidClickedFunda = e.currentTarget;
-    thidClickedFunda.innerText = "Deleting...";
+    const thisClickedButton = e.currentTarget;
+    thisClickedButton.innerText = "Deleting...";
 
-    const res = await axios.delete(`/api/transactions/${id}`);
+    const res = await axios.delete(`/api/v1/transactions/${id}`);
     if(res.data.statuscode === 200)
     {
-      thidClickedFunda.closest("tr").remove()
+      thisClickedButton.closest("tr").remove()
       console.log(res.data.message);
     }
   }
 
-  render () {
-    var transaction_HTMLTABLE = "";
+  handleSearch = (event) => {
+    const searchValue = event.target.value;
+    const filteredTransactions = this.state.transactions.filter(transaction => {
+        return transaction.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+               transaction.value.toString().includes(searchValue) ||
+               transaction.type.toLowerCase().includes(searchValue.toLowerCase());
+    });
+    this.setState({ filteredTransactions });
+  }
+
+  paginate = (pageNumber) => {
+    this.setState({ currentPage: pageNumber });
+  }
+
+  render() {
+    const { currentPage, transactionsPerPage, transactions, filteredTransactions } = this.state;
+    let transaction_HTMLTABLE = "";
     if(this.state.loading){
       transaction_HTMLTABLE = <tr><center><h4>Carregando...</h4> </center></tr>
     }else{
-      transaction_HTMLTABLE =
-      this.state.transactions.map( (transaction) => {
+      const indexOfLastTransaction = currentPage * transactionsPerPage;
+      const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+      const currentTransactions = filteredTransactions.length>0 ? filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction) : transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
+      
+      transaction_HTMLTABLE = currentTransactions.map((transaction) => {
         return (
           <tr key={transaction.id}>
             <td>{transaction.title}</td>
-            <td>{transaction.value}</td>
+            <td>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(transaction.value)}</td>
             <td>{transaction.type}</td>
             <td>
               <button 
@@ -61,6 +83,7 @@ class TransactionList extends Component {
         )
       });
     }
+   
     return (
       <div className='container py-4'>
         <div className='row justify-content-center'>
@@ -68,9 +91,17 @@ class TransactionList extends Component {
             <div className='card'>
               <div className='card-header'>All transactions</div>
               <div className='card-body'>
-                <Link className='btn btn-success btn-sm mb-3' to='/create'>
-                  Create new transaction
-                </Link>
+                <div className='d-flex justify-content-between'>
+                  <div class="d-flex justify-content-start">
+                    <Link className='btn btn-success btn-sm mb-3' to='/create'>
+                      Create new transaction
+                    </Link>
+                  </div>
+                  <div class="d-flex justify-content-end">
+                    <input type='text' className='form-control mb-3' placeholder='Search...' onChange={this.handleSearch}/>
+                  </div>
+                  
+                </div>               
                 <div className="card shadow">
                   <div className="card-body">
                     <table className="table datatables"> 
@@ -86,6 +117,13 @@ class TransactionList extends Component {
                         {transaction_HTMLTABLE}
                       </tbody>                      
                     </table>
+                    <div className="d-flex justify-content-center">
+                      {this.state.pageNumbers.map(number => {
+                        return (
+                          <button key={number} className='btn btn-sm mx-1' onClick={() => this.paginate(number)}>{number}</button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>

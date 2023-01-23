@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\TransactionController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,4 +14,6 @@ use App\Http\Controllers\Api\v1\TransactionController;
 |
 */
 
-Route::apiResource('transactions', TransactionController::class);
+Route::group(['prefix' => 'v1'], function () {
+    Route::apiResource('transactions', TransactionController::class);
+});

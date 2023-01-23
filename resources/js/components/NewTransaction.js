@@ -33,7 +33,7 @@ class NewTransaction extends Component {
       type: this.state.type
     }
 
-    axios.post('/api/transactions', transaction)
+    axios.post('/api/v1/transactions', transaction)
       .then(response => {
         // redirect to the homepage
         history.push('/')

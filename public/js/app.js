@@ -5622,7 +5622,7 @@ var NewTransaction = /*#__PURE__*/function (_Component) {
         value: this.state.value,
         type: this.state.type
       };
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/transactions', transaction).then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/v1/transactions', transaction).then(function (response) {
         // redirect to the homepage
         history.push('/');
       })["catch"](function (error) {
@@ -5813,26 +5813,30 @@ var TransactionList = /*#__PURE__*/function (_Component) {
 
     _defineProperty(_assertThisInitialized(_this), "state", {
       transactions: [],
-      loading: true
+      loading: true,
+      filteredTransactions: [],
+      currentPage: 1,
+      transactionsPerPage: 5,
+      pageNumbers: []
     });
 
     _defineProperty(_assertThisInitialized(_this), "deleteTransaction", /*#__PURE__*/function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(e, id) {
-        var thidClickedFunda, res;
+        var thisClickedButton, res;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                thidClickedFunda = e.currentTarget;
-                thidClickedFunda.innerText = "Deleting...";
+                thisClickedButton = e.currentTarget;
+                thisClickedButton.innerText = "Deleting...";
                 _context.next = 4;
-                return axios__WEBPACK_IMPORTED_MODULE_2___default()["delete"]("/api/transactions/".concat(id));
+                return axios__WEBPACK_IMPORTED_MODULE_2___default()["delete"]("/api/v1/transactions/".concat(id));
 
               case 4:
                 res = _context.sent;
 
                 if (res.data.statuscode === 200) {
-                  thidClickedFunda.closest("tr").remove();
+                  thisClickedButton.closest("tr").remove();
                   console.log(res.data.message);
                 }
 
@@ -5849,6 +5853,24 @@ var TransactionList = /*#__PURE__*/function (_Component) {
       };
     }());
 
+    _defineProperty(_assertThisInitialized(_this), "handleSearch", function (event) {
+      var searchValue = event.target.value;
+
+      var filteredTransactions = _this.state.transactions.filter(function (transaction) {
+        return transaction.title.toLowerCase().includes(searchValue.toLowerCase()) || transaction.value.toString().includes(searchValue) || transaction.type.toLowerCase().includes(searchValue.toLowerCase());
+      });
+
+      _this.setState({
+        filteredTransactions: filteredTransactions
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "paginate", function (pageNumber) {
+      _this.setState({
+        currentPage: pageNumber
+      });
+    });
+
     return _this;
   }
 
@@ -5862,7 +5884,7 @@ var TransactionList = /*#__PURE__*/function (_Component) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.next = 2;
-                return axios__WEBPACK_IMPORTED_MODULE_2___default().get('/api/transactions');
+                return axios__WEBPACK_IMPORTED_MODULE_2___default().get('/api/v1/transactions');
 
               case 2:
                 res = _context2.sent;
@@ -5897,6 +5919,11 @@ var TransactionList = /*#__PURE__*/function (_Component) {
     value: function render() {
       var _this2 = this;
 
+      var _this$state = this.state,
+          currentPage = _this$state.currentPage,
+          transactionsPerPage = _this$state.transactionsPerPage,
+          transactions = _this$state.transactions,
+          filteredTransactions = _this$state.filteredTransactions;
       var transaction_HTMLTABLE = "";
 
       if (this.state.loading) {
@@ -5908,12 +5935,18 @@ var TransactionList = /*#__PURE__*/function (_Component) {
           })
         });
       } else {
-        transaction_HTMLTABLE = this.state.transactions.map(function (transaction) {
+        var indexOfLastTransaction = currentPage * transactionsPerPage;
+        var indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+        var currentTransactions = filteredTransactions.length > 0 ? filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction) : transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
+        transaction_HTMLTABLE = currentTransactions.map(function (transaction) {
           return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("tr", {
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
               children: transaction.title
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
-              children: transaction.value
+              children: new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(transaction.value)
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
               children: transaction.type
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
@@ -5944,15 +5977,29 @@ var TransactionList = /*#__PURE__*/function (_Component) {
                 children: "All transactions"
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
                 className: "card-body",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.Link, {
-                  className: "btn btn-success btn-sm mb-3",
-                  to: "/create",
-                  children: "Create new transaction"
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+                  className: "d-flex justify-content-between",
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    "class": "d-flex justify-content-start",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.Link, {
+                      className: "btn btn-success btn-sm mb-3",
+                      to: "/create",
+                      children: "Create new transaction"
+                    })
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                    "class": "d-flex justify-content-end",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("input", {
+                      type: "text",
+                      className: "form-control mb-3",
+                      placeholder: "Search...",
+                      onChange: this.handleSearch
+                    })
+                  })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
                   className: "card shadow",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
                     className: "card-body",
-                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("table", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("table", {
                       className: "table datatables",
                       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("thead", {
                         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("tr", {
@@ -5969,7 +6016,18 @@ var TransactionList = /*#__PURE__*/function (_Component) {
                       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("tbody", {
                         children: transaction_HTMLTABLE
                       })]
-                    })
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                      className: "d-flex justify-content-center",
+                      children: this.state.pageNumbers.map(function (number) {
+                        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
+                          className: "btn btn-sm mx-1",
+                          onClick: function onClick() {
+                            return _this2.paginate(number);
+                          },
+                          children: number
+                        }, number);
+                      })
+                    })]
                   })
                 })]
               })]
