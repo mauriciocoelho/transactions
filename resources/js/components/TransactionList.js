@@ -72,7 +72,7 @@ class TransactionList extends Component {
     }else{
       const indexOfLastTransaction = currentPage * transactionsPerPage;
       const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-      const currentTransactions = filteredTransactions.length>0 ? filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction) : transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
+      const currentTransactions = filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
       
       transaction_HTMLTABLE = currentTransactions.map((transaction) => {
         return (

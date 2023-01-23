@@ -5953,7 +5953,7 @@ var TransactionList = /*#__PURE__*/function (_Component) {
       } else {
         var indexOfLastTransaction = currentPage * transactionsPerPage;
         var indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-        var currentTransactions = filteredTransactions.length > 0 ? filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction) : transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
+        var currentTransactions = filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
         transaction_HTMLTABLE = currentTransactions.map(function (transaction) {
           return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("tr", {
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
