@@ -5816,7 +5816,7 @@ var TransactionList = /*#__PURE__*/function (_Component) {
       loading: true,
       filteredTransactions: [],
       currentPage: 1,
-      transactionsPerPage: 5,
+      transactionsPerPage: 10,
       pageNumbers: []
     });
 
@@ -5863,6 +5863,20 @@ var TransactionList = /*#__PURE__*/function (_Component) {
       _this.setState({
         filteredTransactions: filteredTransactions
       });
+
+      _this.updatePageNumbers();
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "updatePageNumbers", function () {
+      var pageNumbers = [];
+
+      for (var i = 1; i <= Math.ceil(_this.state.filteredTransactions.length / _this.state.transactionsPerPage); i++) {
+        pageNumbers.push(i);
+      }
+
+      _this.setState({
+        pageNumbers: pageNumbers
+      });
     });
 
     _defineProperty(_assertThisInitialized(_this), "paginate", function (pageNumber) {
@@ -5892,8 +5906,10 @@ var TransactionList = /*#__PURE__*/function (_Component) {
                 if (res.data.statuscode === 200) {
                   this.setState({
                     transactions: res.data.data,
-                    loading: false
+                    loading: false,
+                    filteredTransactions: res.data.data
                   });
+                  this.updatePageNumbers();
                 } else {
                   this.setState({
                     loading: false
@@ -6016,8 +6032,8 @@ var TransactionList = /*#__PURE__*/function (_Component) {
                       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("tbody", {
                         children: transaction_HTMLTABLE
                       })]
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
-                      className: "d-flex justify-content-center",
+                    }), this.state.transactions.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+                      className: "d-flex justify-content-end",
                       children: this.state.pageNumbers.map(function (number) {
                         return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
                           className: "btn btn-sm mx-1",

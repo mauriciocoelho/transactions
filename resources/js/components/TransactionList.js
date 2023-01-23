@@ -9,18 +9,20 @@ class TransactionList extends Component {
     loading: true,
     filteredTransactions: [],
     currentPage: 1,
-    transactionsPerPage: 5,
+    transactionsPerPage: 10,
     pageNumbers: []
   }
   
-  async componentDidMount(){
+  async componentDidMount() {
     const res = await axios.get('/api/v1/transactions');
-    if (res.data.statuscode === 200){
+    if (res.data.statuscode === 200) {
       this.setState({
         transactions: res.data.data,
         loading: false,
+        filteredTransactions: res.data.data
       });
-    }else{
+      this.updatePageNumbers();
+    } else {
       this.setState({
         loading: false,
       });
@@ -47,6 +49,15 @@ class TransactionList extends Component {
                transaction.type.toLowerCase().includes(searchValue.toLowerCase());
     });
     this.setState({ filteredTransactions });
+    this.updatePageNumbers();
+  }
+
+  updatePageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(this.state.filteredTransactions.length / this.state.transactionsPerPage); i++) {
+      pageNumbers.push(i);
+    }
+    this.setState({ pageNumbers });
   }
 
   paginate = (pageNumber) => {
@@ -99,8 +110,7 @@ class TransactionList extends Component {
                   </div>
                   <div class="d-flex justify-content-end">
                     <input type='text' className='form-control mb-3' placeholder='Search...' onChange={this.handleSearch}/>
-                  </div>
-                  
+                  </div>                  
                 </div>               
                 <div className="card shadow">
                   <div className="card-body">
@@ -117,13 +127,15 @@ class TransactionList extends Component {
                         {transaction_HTMLTABLE}
                       </tbody>                      
                     </table>
-                    <div className="d-flex justify-content-center">
-                      {this.state.pageNumbers.map(number => {
-                        return (
-                          <button key={number} className='btn btn-sm mx-1' onClick={() => this.paginate(number)}>{number}</button>
-                        );
-                      })}
-                    </div>
+                    {this.state.transactions.length>0 && (
+                      <div className="d-flex justify-content-end">
+                        {this.state.pageNumbers.map(number => {
+                          return (
+                            <button key={number} className='btn btn-sm mx-1' onClick={() => this.paginate(number)}>{number}</button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
